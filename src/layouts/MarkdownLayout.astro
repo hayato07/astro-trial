@@ -1,0 +1,28 @@
+---
+const data = Astro.props;
+const frontmatter = data.frontmatter;
+
+const description =
+	(await data.rawContent())
+        // ヘッダータグ、リンク、画像、リスト、コードブロックを削除
+		.replace(/(^#+\s)|(\s#+$)/gm, "") // ヘッダータグ
+		.replace(/\[([^\]]+)\]\([^\)]+\)/gm, "$1") // リンク
+		.replace(/!\[[^\]]*\]\([^\)]+\)/gm, "") // 画像
+		.replace(/(?:^|\n)(?:-|\d+\.)\s+/gm, "") // リスト
+		.replace(/`[^`]+`/gm, "") // インラインコード
+		.replace(/(?:^|\n)```[\s\S]*?```/gm, "") // 複数行のコードブロック
+        .replace(/\n/g, '') // 改行文字
+		.substring(0, 100);
+console.log(description);
+---
+
+<html>
+    <head>
+        <title>{frontmatter.title}</title>
+        <meta name="description" content={description}>
+    </head>
+	<h1>{frontmatter.title}</h1>
+	<h2>投稿者: {frontmatter.author}</h2>
+	<p>{frontmatter.description}</p>
+	<slot />
+</html>
